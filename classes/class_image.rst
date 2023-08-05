@@ -133,6 +133,8 @@ Methods
    +-----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`Error<enum_@GlobalScope_Error>`         | :ref:`load_bmp_from_buffer<class_Image_method_load_bmp_from_buffer>` **(** :ref:`PackedByteArray<class_PackedByteArray>` buffer **)**                                                                                                                                         |
    +-----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | :ref:`Error<enum_@GlobalScope_Error>`         | :ref:`load_dds_from_buffer<class_Image_method_load_dds_from_buffer>` **(** :ref:`PackedByteArray<class_PackedByteArray>` buffer **)**                                                                                                                                         |
+   +-----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`Image<class_Image>`                     | :ref:`load_from_file<class_Image_method_load_from_file>` **(** :ref:`String<class_String>` path **)** |static|                                                                                                                                                                |
    +-----------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`Error<enum_@GlobalScope_Error>`         | :ref:`load_jpg_from_buffer<class_Image_method_load_jpg_from_buffer>` **(** :ref:`PackedByteArray<class_PackedByteArray>` buffer **)**                                                                                                                                         |
@@ -507,7 +509,7 @@ Texture format that uses `BPTC <https://www.khronos.org/opengl/wiki/BPTC_Texture
 
 :ref:`Format<enum_Image_Format>` **FORMAT_ASTC_4x4** = ``35``
 
-`Adaptive Scalable Texutre Compression <https://en.wikipedia.org/wiki/Adaptive_scalable_texture_compression>`__. This implements the 4x4 (high quality) mode.
+`Adaptive Scalable Texture Compression <https://en.wikipedia.org/wiki/Adaptive_scalable_texture_compression>`__. This implements the 4x4 (high quality) mode.
 
 .. _class_Image_constant_FORMAT_ASTC_4x4_HDR:
 
@@ -523,7 +525,7 @@ Same format as :ref:`FORMAT_ASTC_4x4<class_Image_constant_FORMAT_ASTC_4x4>`, but
 
 :ref:`Format<enum_Image_Format>` **FORMAT_ASTC_8x8** = ``37``
 
-`Adaptive Scalable Texutre Compression <https://en.wikipedia.org/wiki/Adaptive_scalable_texture_compression>`__. This implements the 8x8 (low quality) mode.
+`Adaptive Scalable Texture Compression <https://en.wikipedia.org/wiki/Adaptive_scalable_texture_compression>`__. This implements the 8x8 (low quality) mode.
 
 .. _class_Image_constant_FORMAT_ASTC_8x8_HDR:
 
@@ -1361,6 +1363,18 @@ See also :ref:`ImageTexture<class_ImageTexture>` description for usage examples.
 Loads an image from the binary contents of a BMP file.
 
 \ **Note:** Godot's BMP module doesn't support 16-bit per pixel images. Only 1-bit, 4-bit, 8-bit, 24-bit, and 32-bit per pixel images are supported.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_Image_method_load_dds_from_buffer:
+
+.. rst-class:: classref-method
+
+:ref:`Error<enum_@GlobalScope_Error>` **load_dds_from_buffer** **(** :ref:`PackedByteArray<class_PackedByteArray>` buffer **)**
+
+Loads an image from the binary contents of a DDS file.
 
 .. rst-class:: classref-item-separator
 
