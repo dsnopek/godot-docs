@@ -406,12 +406,6 @@ Properties
    +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`String<class_String>`                       | :ref:`version/name<class_EditorExportPlatformAndroid_property_version/name>`                                                                     |
    +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
-   | :ref:`int<class_int>`                             | :ref:`xr_features/hand_tracking<class_EditorExportPlatformAndroid_property_xr_features/hand_tracking>`                                           |
-   +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
-   | :ref:`int<class_int>`                             | :ref:`xr_features/hand_tracking_frequency<class_EditorExportPlatformAndroid_property_xr_features/hand_tracking_frequency>`                       |
-   +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
-   | :ref:`int<class_int>`                             | :ref:`xr_features/passthrough<class_EditorExportPlatformAndroid_property_xr_features/passthrough>`                                               |
-   +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`int<class_int>`                             | :ref:`xr_features/xr_mode<class_EditorExportPlatformAndroid_property_xr_features/xr_mode>`                                                       |
    +---------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
 
@@ -966,7 +960,7 @@ Allows an application to act as an AccountAuthenticator for the AccountManager.
 
 :ref:`bool<class_bool>` **permissions/battery_stats**
 
-Allows an application to collect battery statistics. Sett `BATTERY_STATS <https://developer.android.com/reference/android/Manifest.permission#BATTERY_STATS>`__.
+Allows an application to collect battery statistics. See `BATTERY_STATS <https://developer.android.com/reference/android/Manifest.permission#BATTERY_STATS>`__.
 
 .. rst-class:: classref-item-separator
 
@@ -2676,7 +2670,7 @@ If ``true``, allows the application to participate in the backup and restore inf
 
 :ref:`int<class_int>` **version/code**
 
-Machine-readable application version.
+Machine-readable application version. This must be incremented for every new release pushed to the Play Store.
 
 .. rst-class:: classref-item-separator
 
@@ -2688,49 +2682,7 @@ Machine-readable application version.
 
 :ref:`String<class_String>` **version/name**
 
-Application version visible to the user.
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_EditorExportPlatformAndroid_property_xr_features/hand_tracking:
-
-.. rst-class:: classref-property
-
-:ref:`int<class_int>` **xr_features/hand_tracking**
-
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_EditorExportPlatformAndroid_property_xr_features/hand_tracking_frequency:
-
-.. rst-class:: classref-property
-
-:ref:`int<class_int>` **xr_features/hand_tracking_frequency**
-
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
-
-.. rst-class:: classref-item-separator
-
-----
-
-.. _class_EditorExportPlatformAndroid_property_xr_features/passthrough:
-
-.. rst-class:: classref-property
-
-:ref:`int<class_int>` **xr_features/passthrough**
-
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+Application version visible to the user. Falls back to :ref:`ProjectSettings.application/config/version<class_ProjectSettings_property_application/config/version>` if left empty.
 
 .. rst-class:: classref-item-separator
 
