@@ -92,6 +92,8 @@ Methods
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`Color<class_Color>`                                         | :ref:`get_custom_color<class_TreeItem_method_get_custom_color>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                                         |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | :ref:`Callable<class_Callable>`                                   | :ref:`get_custom_draw_callback<class_TreeItem_method_get_custom_draw_callback>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                         |
+   +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`Font<class_Font>`                                           | :ref:`get_custom_font<class_TreeItem_method_get_custom_font>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                                           |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`int<class_int>`                                             | :ref:`get_custom_font_size<class_TreeItem_method_get_custom_font_size>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                                 |
@@ -143,6 +145,8 @@ Methods
    | :ref:`HorizontalAlignment<enum_@GlobalScope_HorizontalAlignment>` | :ref:`get_text_alignment<class_TreeItem_method_get_text_alignment>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                                     |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`TextDirection<enum_Control_TextDirection>`                  | :ref:`get_text_direction<class_TreeItem_method_get_text_direction>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                                     |
+   +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | :ref:`OverrunBehavior<enum_TextServer_OverrunBehavior>`           | :ref:`get_text_overrun_behavior<class_TreeItem_method_get_text_overrun_behavior>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                       |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | :ref:`String<class_String>`                                       | :ref:`get_tooltip_text<class_TreeItem_method_get_tooltip_text>` **(** :ref:`int<class_int>` column **)** |const|                                                                                                                                         |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -200,6 +204,8 @@ Methods
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | void                                                              | :ref:`set_custom_draw<class_TreeItem_method_set_custom_draw>` **(** :ref:`int<class_int>` column, :ref:`Object<class_Object>` object, :ref:`StringName<class_StringName>` callback **)**                                                                 |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | void                                                              | :ref:`set_custom_draw_callback<class_TreeItem_method_set_custom_draw_callback>` **(** :ref:`int<class_int>` column, :ref:`Callable<class_Callable>` callback **)**                                                                                       |
+   +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | void                                                              | :ref:`set_custom_font<class_TreeItem_method_set_custom_font>` **(** :ref:`int<class_int>` column, :ref:`Font<class_Font>` font **)**                                                                                                                     |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | void                                                              | :ref:`set_custom_font_size<class_TreeItem_method_set_custom_font_size>` **(** :ref:`int<class_int>` column, :ref:`int<class_int>` font_size **)**                                                                                                        |
@@ -241,6 +247,8 @@ Methods
    | void                                                              | :ref:`set_text_alignment<class_TreeItem_method_set_text_alignment>` **(** :ref:`int<class_int>` column, :ref:`HorizontalAlignment<enum_@GlobalScope_HorizontalAlignment>` text_alignment **)**                                                           |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | void                                                              | :ref:`set_text_direction<class_TreeItem_method_set_text_direction>` **(** :ref:`int<class_int>` column, :ref:`TextDirection<enum_Control_TextDirection>` direction **)**                                                                                 |
+   +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   | void                                                              | :ref:`set_text_overrun_behavior<class_TreeItem_method_set_text_overrun_behavior>` **(** :ref:`int<class_int>` column, :ref:`OverrunBehavior<enum_TextServer_OverrunBehavior>` overrun_behavior **)**                                                     |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
    | void                                                              | :ref:`set_tooltip_text<class_TreeItem_method_set_tooltip_text>` **(** :ref:`int<class_int>` column, :ref:`String<class_String>` tooltip **)**                                                                                                            |
    +-------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -299,6 +307,10 @@ Cell contains an icon.
 .. rst-class:: classref-enumeration-constant
 
 :ref:`TreeCellMode<enum_TreeItem_TreeCellMode>` **CELL_MODE_CUSTOM** = ``4``
+
+.. container:: contribute
+
+	There is currently no description for this enum. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
 
 
 
@@ -630,6 +642,18 @@ Returns the custom color of column ``column``.
 
 ----
 
+.. _class_TreeItem_method_get_custom_draw_callback:
+
+.. rst-class:: classref-method
+
+:ref:`Callable<class_Callable>` **get_custom_draw_callback** **(** :ref:`int<class_int>` column **)** |const|
+
+Returns the custom callback of column ``column``.
+
+.. rst-class:: classref-item-separator
+
+----
+
 .. _class_TreeItem_method_get_custom_font:
 
 .. rst-class:: classref-method
@@ -949,6 +973,18 @@ Returns the given column's text alignment.
 :ref:`TextDirection<enum_Control_TextDirection>` **get_text_direction** **(** :ref:`int<class_int>` column **)** |const|
 
 Returns item's text base writing direction.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_TreeItem_method_get_text_overrun_behavior:
+
+.. rst-class:: classref-method
+
+:ref:`OverrunBehavior<enum_TextServer_OverrunBehavior>` **get_text_overrun_behavior** **(** :ref:`int<class_int>` column **)** |const|
+
+Returns the clipping behavior when the text exceeds the item's bounding rectangle in the given ``column``. By default it is :ref:`TextServer.OVERRUN_TRIM_ELLIPSIS<class_TextServer_constant_OVERRUN_TRIM_ELLIPSIS>`.
 
 .. rst-class:: classref-item-separator
 
@@ -1300,6 +1336,22 @@ Sets the given column's custom draw callback to ``callback`` method on ``object`
 
 The ``callback`` should accept two arguments: the **TreeItem** that is drawn and its position and size as a :ref:`Rect2<class_Rect2>`.
 
+\ *Deprecated.* Use :ref:`set_custom_draw_callback<class_TreeItem_method_set_custom_draw_callback>` instead.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_TreeItem_method_set_custom_draw_callback:
+
+.. rst-class:: classref-method
+
+void **set_custom_draw_callback** **(** :ref:`int<class_int>` column, :ref:`Callable<class_Callable>` callback **)**
+
+Sets the given column's custom draw callback. Use an empty :ref:`Callable<class_Callable>` (``Callable()``) to clear the custom callback.
+
+The ``callback`` should accept two arguments: the **TreeItem** that is drawn and its position and size as a :ref:`Rect2<class_Rect2>`.
+
 .. rst-class:: classref-item-separator
 
 ----
@@ -1561,6 +1613,18 @@ Sets the given column's text alignment. See :ref:`HorizontalAlignment<enum_@Glob
 void **set_text_direction** **(** :ref:`int<class_int>` column, :ref:`TextDirection<enum_Control_TextDirection>` direction **)**
 
 Sets item's text base writing direction.
+
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_TreeItem_method_set_text_overrun_behavior:
+
+.. rst-class:: classref-method
+
+void **set_text_overrun_behavior** **(** :ref:`int<class_int>` column, :ref:`OverrunBehavior<enum_TextServer_OverrunBehavior>` overrun_behavior **)**
+
+Sets the clipping behavior when the text exceeds the item's bounding rectangle in the given ``column``.
 
 .. rst-class:: classref-item-separator
 
