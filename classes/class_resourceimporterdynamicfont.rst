@@ -12,9 +12,25 @@ ResourceImporterDynamicFont
 
 **Inherits:** :ref:`ResourceImporter<class_ResourceImporter>` **<** :ref:`RefCounted<class_RefCounted>` **<** :ref:`Object<class_Object>`
 
-.. container:: contribute
+Imports a TTF, TTC, OTF, OTC, WOFF or WOFF2 font file for font rendering that adapts to any size.
 
-	There is currently no description for this class. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+.. rst-class:: classref-introduction-group
+
+Description
+-----------
+
+Unlike bitmap fonts, dynamic fonts can be resized to any size and still look crisp. Dynamic fonts also optionally support MSDF font rendering, which allows for run-time scale changes with no re-rasterization cost.
+
+While WOFF and especially WOFF2 tend to result in smaller file sizes, there is no universally "better" font format. In most situations, it's recommended to use the font format that was shipped on the font developer's website.
+
+See also :ref:`ResourceImporterBMFont<class_ResourceImporterBMFont>` and :ref:`ResourceImporterImageFont<class_ResourceImporterImageFont>`.
+
+.. rst-class:: classref-introduction-group
+
+Tutorials
+---------
+
+- `Dynamic fonts - Using fonts <../tutorials/ui/gui_using_fonts.html#dynamic-fonts>`__
 
 .. rst-class:: classref-reftable-group
 
@@ -30,6 +46,8 @@ Properties
    | :ref:`int<class_int>`               | :ref:`antialiasing<class_ResourceImporterDynamicFont_property_antialiasing>`                                             | ``1``     |
    +-------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
    | :ref:`bool<class_bool>`             | :ref:`compress<class_ResourceImporterDynamicFont_property_compress>`                                                     | ``true``  |
+   +-------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
+   | :ref:`bool<class_bool>`             | :ref:`disable_embedded_bitmaps<class_ResourceImporterDynamicFont_property_disable_embedded_bitmaps>`                     | ``true``  |
    +-------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
    | :ref:`Array<class_Array>`           | :ref:`fallbacks<class_ResourceImporterDynamicFont_property_fallbacks>`                                                   | ``[]``    |
    +-------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
@@ -71,11 +89,11 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`bool<class_bool>` **allow_system_fallback** = ``true``
+:ref:`bool<class_bool>` **allow_system_fallback** = ``true`` :ref:`🔗<class_ResourceImporterDynamicFont_property_allow_system_fallback>`
 
-.. container:: contribute
+If ``true``, automatically use system fonts as a fallback if a glyph isn't found in this dynamic font. This makes supporting CJK characters or emoji more straightforward, as you don't need to include a CJK/emoji font in your project. See also :ref:`fallbacks<class_ResourceImporterDynamicFont_property_fallbacks>`.
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+\ **Note:** The appearance of system fonts varies across platforms. Loading system fonts is only supported on Windows, macOS, Linux, Android and iOS.
 
 .. rst-class:: classref-item-separator
 
@@ -85,11 +103,15 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`int<class_int>` **antialiasing** = ``1``
+:ref:`int<class_int>` **antialiasing** = ``1`` :ref:`🔗<class_ResourceImporterDynamicFont_property_antialiasing>`
 
-.. container:: contribute
+The font antialiasing method to use.
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+\ **Disabled:** Most suited for pixel art fonts, although you do not *have* to change the antialiasing from the default **Grayscale** if the font file was well-created and the font is used at an integer multiple of its intended size. If pixel art fonts have a bad appearance at their intended size, try setting :ref:`subpixel_positioning<class_ResourceImporterDynamicFont_property_subpixel_positioning>` to **Disabled** instead.
+
+\ **Grayscale:** Use grayscale antialiasing. This is the approach used by the operating system on macOS, Android and iOS.
+
+\ **LCD Subpixel:** Use antialiasing with subpixel patterns to make fonts sharper on LCD displays. This is the approach used by the operating system on Windows and most Linux distributions. The downside is that this can introduce "fringing" on edges, especially on display technologies that don't use standard RGB subpixels (such as OLED displays). The LCD subpixel layout is globally controlled by :ref:`ProjectSettings.gui/theme/lcd_subpixel_layout<class_ProjectSettings_property_gui/theme/lcd_subpixel_layout>`, which also allows falling back to grayscale antialiasing.
 
 .. rst-class:: classref-item-separator
 
@@ -99,11 +121,21 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`bool<class_bool>` **compress** = ``true``
+:ref:`bool<class_bool>` **compress** = ``true`` :ref:`🔗<class_ResourceImporterDynamicFont_property_compress>`
 
-.. container:: contribute
+If ``true``, uses lossless compression for the resulting font.
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+.. rst-class:: classref-item-separator
+
+----
+
+.. _class_ResourceImporterDynamicFont_property_disable_embedded_bitmaps:
+
+.. rst-class:: classref-property
+
+:ref:`bool<class_bool>` **disable_embedded_bitmaps** = ``true`` :ref:`🔗<class_ResourceImporterDynamicFont_property_disable_embedded_bitmaps>`
+
+If set to ``true``, embedded font bitmap loading is disabled (bitmap-only and color fonts ignore this property).
 
 .. rst-class:: classref-item-separator
 
@@ -113,11 +145,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`Array<class_Array>` **fallbacks** = ``[]``
+:ref:`Array<class_Array>` **fallbacks** = ``[]`` :ref:`🔗<class_ResourceImporterDynamicFont_property_fallbacks>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+List of font fallbacks to use if a glyph isn't found in this dynamic font. Fonts at the beginning of the array are attempted first, but fallback fonts that don't support the glyph's language and script are attempted last (see :ref:`language_support<class_ResourceImporterDynamicFont_property_language_support>` and :ref:`script_support<class_ResourceImporterDynamicFont_property_script_support>`). See also :ref:`allow_system_fallback<class_ResourceImporterDynamicFont_property_allow_system_fallback>`.
 
 .. rst-class:: classref-item-separator
 
@@ -127,11 +157,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`bool<class_bool>` **force_autohinter** = ``false``
+:ref:`bool<class_bool>` **force_autohinter** = ``false`` :ref:`🔗<class_ResourceImporterDynamicFont_property_force_autohinter>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+If ``true``, forces generation of hinting data for the font using `FreeType <https://freetype.org/>`__'s autohinter. This will make :ref:`hinting<class_ResourceImporterDynamicFont_property_hinting>` effective with fonts that don't include hinting data.
 
 .. rst-class:: classref-item-separator
 
@@ -141,11 +169,11 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`bool<class_bool>` **generate_mipmaps** = ``false``
+:ref:`bool<class_bool>` **generate_mipmaps** = ``false`` :ref:`🔗<class_ResourceImporterDynamicFont_property_generate_mipmaps>`
 
-.. container:: contribute
+If ``true``, this font will have mipmaps generated. This prevents text from looking grainy when a :ref:`Control<class_Control>` is scaled down, or when a :ref:`Label3D<class_Label3D>` is viewed from a long distance (if :ref:`Label3D.texture_filter<class_Label3D_property_texture_filter>` is set to a mode that displays mipmaps).
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+Enabling :ref:`generate_mipmaps<class_ResourceImporterDynamicFont_property_generate_mipmaps>` increases font generation time and memory usage. Only enable this setting if you actually need it.
 
 .. rst-class:: classref-item-separator
 
@@ -155,11 +183,15 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`int<class_int>` **hinting** = ``1``
+:ref:`int<class_int>` **hinting** = ``1`` :ref:`🔗<class_ResourceImporterDynamicFont_property_hinting>`
 
-.. container:: contribute
+The hinting mode to use. This controls how aggressively glyph edges should be snapped to pixels when rasterizing the font. Depending on personal preference, you may prefer using one hinting mode over the other. Hinting modes other than **None** are only effective if the font contains hinting data (see :ref:`force_autohinter<class_ResourceImporterDynamicFont_property_force_autohinter>`).
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+\ **None:** Smoothest appearance, which can make the font look blurry at small sizes.
+
+\ **Light:** Sharp result by snapping glyph edges to pixels on the Y axis only.
+
+\ **Full:** Sharpest by snapping glyph edges to pixels on both X and Y axes.
 
 .. rst-class:: classref-item-separator
 
@@ -169,11 +201,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`Dictionary<class_Dictionary>` **language_support** = ``{}``
+:ref:`Dictionary<class_Dictionary>` **language_support** = ``{}`` :ref:`🔗<class_ResourceImporterDynamicFont_property_language_support>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+Override the list of languages supported by this font. If left empty, this is supplied by the font metadata. There is usually no need to change this. See also :ref:`script_support<class_ResourceImporterDynamicFont_property_script_support>`.
 
 .. rst-class:: classref-item-separator
 
@@ -183,11 +213,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`int<class_int>` **msdf_pixel_range** = ``8``
+:ref:`int<class_int>` **msdf_pixel_range** = ``8`` :ref:`🔗<class_ResourceImporterDynamicFont_property_msdf_pixel_range>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+The width of the range around the shape between the minimum and maximum representable signed distance. If using font outlines, :ref:`msdf_pixel_range<class_ResourceImporterDynamicFont_property_msdf_pixel_range>` must be set to at least *twice* the size of the largest font outline. The default :ref:`msdf_pixel_range<class_ResourceImporterDynamicFont_property_msdf_pixel_range>` value of ``8`` allows outline sizes up to ``4`` to look correct.
 
 .. rst-class:: classref-item-separator
 
@@ -197,11 +225,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`int<class_int>` **msdf_size** = ``48``
+:ref:`int<class_int>` **msdf_size** = ``48`` :ref:`🔗<class_ResourceImporterDynamicFont_property_msdf_size>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+Source font size used to generate MSDF textures. Higher values allow for more precision, but are slower to render and require more memory. Only increase this value if you notice a visible lack of precision in glyph rendering. Only effective if :ref:`multichannel_signed_distance_field<class_ResourceImporterDynamicFont_property_multichannel_signed_distance_field>` is ``true``.
 
 .. rst-class:: classref-item-separator
 
@@ -211,11 +237,11 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`bool<class_bool>` **multichannel_signed_distance_field** = ``false``
+:ref:`bool<class_bool>` **multichannel_signed_distance_field** = ``false`` :ref:`🔗<class_ResourceImporterDynamicFont_property_multichannel_signed_distance_field>`
 
-.. container:: contribute
+If set to ``true``, the default font will use multichannel signed distance field (MSDF) for crisp rendering at any size. Since this approach does not rely on rasterizing the font every time its size changes, this allows for resizing the font in real-time without any performance penalty. Text will also not look grainy for :ref:`Control<class_Control>`\ s that are scaled down (or for :ref:`Label3D<class_Label3D>`\ s viewed from a long distance).
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+MSDF font rendering can be combined with :ref:`generate_mipmaps<class_ResourceImporterDynamicFont_property_generate_mipmaps>` to further improve font rendering quality when scaled down.
 
 .. rst-class:: classref-item-separator
 
@@ -225,11 +251,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`Dictionary<class_Dictionary>` **opentype_features** = ``{}``
+:ref:`Dictionary<class_Dictionary>` **opentype_features** = ``{}`` :ref:`🔗<class_ResourceImporterDynamicFont_property_opentype_features>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+The OpenType features to enable, disable or set a value for this font. This can be used to enable optional features provided by the font, such as ligatures or alternative glyphs. The list of supported OpenType features varies on a per-font basis.
 
 .. rst-class:: classref-item-separator
 
@@ -239,11 +263,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`float<class_float>` **oversampling** = ``0.0``
+:ref:`float<class_float>` **oversampling** = ``0.0`` :ref:`🔗<class_ResourceImporterDynamicFont_property_oversampling>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+If set to a value greater than ``0.0``, overrides the oversampling factor for the font. This can be used to render the font at a higher or lower resolution than intended without affecting its physical size. In most cases, this should be left at ``0.0``.
 
 .. rst-class:: classref-item-separator
 
@@ -253,11 +275,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`Array<class_Array>` **preload** = ``[]``
+:ref:`Array<class_Array>` **preload** = ``[]`` :ref:`🔗<class_ResourceImporterDynamicFont_property_preload>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+The glyph ranges to prerender. This can avoid stuttering during gameplay when new characters need to be rendered, especially if :ref:`subpixel_positioning<class_ResourceImporterDynamicFont_property_subpixel_positioning>` is enabled. The downside of using preloading is that initial project load times will increase, as well as memory usage.
 
 .. rst-class:: classref-item-separator
 
@@ -267,11 +287,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`Dictionary<class_Dictionary>` **script_support** = ``{}``
+:ref:`Dictionary<class_Dictionary>` **script_support** = ``{}`` :ref:`🔗<class_ResourceImporterDynamicFont_property_script_support>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+Override the list of language scripts supported by this font. If left empty, this is supplied by the font metadata. There is usually no need to change this. See also :ref:`language_support<class_ResourceImporterDynamicFont_property_language_support>`.
 
 .. rst-class:: classref-item-separator
 
@@ -281,11 +299,17 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`int<class_int>` **subpixel_positioning** = ``1``
+:ref:`int<class_int>` **subpixel_positioning** = ``1`` :ref:`🔗<class_ResourceImporterDynamicFont_property_subpixel_positioning>`
 
-.. container:: contribute
+Subpixel positioning improves font rendering appearance, especially at smaller font sizes. The downside is that it takes more time to initially render the font, which can cause stuttering during gameplay, especially if used with large font sizes. This should be set to **Disabled** for fonts with a pixel art appearance.
 
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+\ **Disabled:** No subpixel positioning. Lowest quality, fastest rendering.
+
+\ **Auto:** Use subpixel positioning at small font sizes (the chosen quality varies depending on font size). Large fonts will not use subpixel positioning. This is a good tradeoff between performance and quality.
+
+\ **One Half of a Pixel:** Always perform intermediate subpixel positioning regardless of font size. High quality, slow rendering.
+
+\ **One Quarter of a Pixel:** Always perform precise subpixel positioning regardless of font size. Highest quality, slowest rendering.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
@@ -294,3 +318,4 @@ Property Descriptions
 .. |static| replace:: :abbr:`static (This method doesn't need an instance to be called, so it can be called directly using the class name.)`
 .. |operator| replace:: :abbr:`operator (This method describes a valid operator to use with this type as left-hand operand.)`
 .. |bitfield| replace:: :abbr:`BitField (This value is an integer composed as a bitmask of the following flags.)`
+.. |void| replace:: :abbr:`void (No return value.)`

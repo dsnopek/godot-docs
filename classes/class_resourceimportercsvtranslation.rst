@@ -12,9 +12,31 @@ ResourceImporterCSVTranslation
 
 **Inherits:** :ref:`ResourceImporter<class_ResourceImporter>` **<** :ref:`RefCounted<class_RefCounted>` **<** :ref:`Object<class_Object>`
 
-.. container:: contribute
+Imports comma-separated values
 
-	There is currently no description for this class. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+.. rst-class:: classref-introduction-group
+
+Description
+-----------
+
+Comma-separated values are a plain text table storage format. The format's simplicity makes it easy to edit in any text editor or spreadsheet software. This makes it a common choice for game localization.
+
+\ **Example CSV file:**\ 
+
+.. code:: text
+
+    keys,en,es,ja
+    GREET,"Hello, friend!","Hola, amigo!",こんにちは
+    ASK,How are you?,Cómo está?,元気ですか
+    BYE,Goodbye,Adiós,さようなら
+    QUOTE,"""Hello"" said the man.","""Hola"" dijo el hombre.",「こんにちは」男は言いました
+
+.. rst-class:: classref-introduction-group
+
+Tutorials
+---------
+
+- :doc:`Importing translations <../tutorials/assets_pipeline/importing_translations>`
 
 .. rst-class:: classref-reftable-group
 
@@ -43,11 +65,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`bool<class_bool>` **compress** = ``true``
+:ref:`bool<class_bool>` **compress** = ``true`` :ref:`🔗<class_ResourceImporterCSVTranslation_property_compress>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+If ``true``, creates an :ref:`OptimizedTranslation<class_OptimizedTranslation>` instead of a :ref:`Translation<class_Translation>`. This makes the resulting file smaller at the cost of a small CPU overhead.
 
 .. rst-class:: classref-item-separator
 
@@ -57,11 +77,9 @@ Property Descriptions
 
 .. rst-class:: classref-property
 
-:ref:`int<class_int>` **delimiter** = ``0``
+:ref:`int<class_int>` **delimiter** = ``0`` :ref:`🔗<class_ResourceImporterCSVTranslation_property_delimiter>`
 
-.. container:: contribute
-
-	There is currently no description for this property. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+The delimiter to use in the CSV file. The default value matches the common CSV convention. Tab-separated values are sometimes called TSV files.
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
@@ -70,3 +88,4 @@ Property Descriptions
 .. |static| replace:: :abbr:`static (This method doesn't need an instance to be called, so it can be called directly using the class name.)`
 .. |operator| replace:: :abbr:`operator (This method describes a valid operator to use with this type as left-hand operand.)`
 .. |bitfield| replace:: :abbr:`BitField (This value is an integer composed as a bitmask of the following flags.)`
+.. |void| replace:: :abbr:`void (No return value.)`

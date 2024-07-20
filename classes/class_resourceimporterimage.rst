@@ -12,9 +12,21 @@ ResourceImporterImage
 
 **Inherits:** :ref:`ResourceImporter<class_ResourceImporter>` **<** :ref:`RefCounted<class_RefCounted>` **<** :ref:`Object<class_Object>`
 
-.. container:: contribute
+Imports a image for use in scripting, with no rendering capabilities.
 
-	There is currently no description for this class. Please help us by :ref:`contributing one <doc_updating_the_class_reference>`!
+.. rst-class:: classref-introduction-group
+
+Description
+-----------
+
+This importer imports :ref:`Image<class_Image>` resources, as opposed to :ref:`CompressedTexture2D<class_CompressedTexture2D>`. If you need to render the image in 2D or 3D, use :ref:`ResourceImporterTexture<class_ResourceImporterTexture>` instead.
+
+.. rst-class:: classref-introduction-group
+
+Tutorials
+---------
+
+- :doc:`Importing images <../tutorials/assets_pipeline/importing_images>`
 
 .. |virtual| replace:: :abbr:`virtual (This method should typically be overridden by the user to have any effect.)`
 .. |const| replace:: :abbr:`const (This method has no side effects. It doesn't modify any of the instance's member variables.)`
@@ -23,3 +35,4 @@ ResourceImporterImage
 .. |static| replace:: :abbr:`static (This method doesn't need an instance to be called, so it can be called directly using the class name.)`
 .. |operator| replace:: :abbr:`operator (This method describes a valid operator to use with this type as left-hand operand.)`
 .. |bitfield| replace:: :abbr:`BitField (This value is an integer composed as a bitmask of the following flags.)`
+.. |void| replace:: :abbr:`void (No return value.)`
