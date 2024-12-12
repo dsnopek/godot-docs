@@ -33,7 +33,7 @@ Since this is using the API directly, there's no need to use the
 File structure
 --------------
 
-To organize our files, we're gonna split in mainly two folders:
+To organize our files, we're gonna split into mainly two folders:
 
 .. code-block:: none
 
@@ -56,7 +56,7 @@ folder in the example project.
 
 Lastly, there's another source of information we need to refer to, which is the JSON
 file with the Godot API reference. This file won't be used by the code directly, we
-will only use to extract some information manually.
+will only use it to extract some information manually.
 
 To get this JSON file, just call the Godot executable:
 
@@ -81,7 +81,7 @@ itself uses.
 
 The following ``SConstruct`` file is a simple one that will build your extension
 to the current platform that you are using, be it Linux, macOS, or Windows. This
-will be a non-optimized build for debugging purposes. It also assumes a 64-bits
+will be a non-optimized build for debugging purposes. It also assumes a 64-bit
 build, which is relevant for some parts of the example code. Making other build
 types and cross-compilation is out of the scope of this tutorial. Save this file
 to the root folder.
@@ -125,7 +125,7 @@ this file when adding new source files.
 Initializing the extension
 --------------------------
 
-The first bit of code will be responsible to initialize the extension. This is
+The first bit of code will be responsible for initializing the extension. This is
 what makes Godot aware of what our GDExtension provides, such as classes and
 plugins.
 
@@ -210,7 +210,7 @@ functions to initialize and deinitialize are set so Godot will call then when
 needed. It also sets the initialization level which varies per extension. Since
 we plan to add a custom node, the ``SCENE`` level is enough.
 
-We will fill the ``initialize`` function later to register our custom class.
+We will fill the ``initialize_gdexample_module`` function later to register our custom class.
 
 A basic class
 -------------
@@ -239,18 +239,18 @@ contents:
     } GDExample;
 
     // Constructor for the node.
-    void gdexample_init(GDExample *self);
+    void gdexample_class_constructor(GDExample *self);
 
     // Destructor for the node.
-    void gdexample_terminate(GDExample *self);
+    void gdexample_class_destructor(GDExample *self);
 
     // Bindings.
-    void gdexample_bind_methods();
+    void gdexample_class_bind_methods();
 
     #endif // GDEXAMPLE_H
 
 The only things special here are the ``object`` field, which holds a pointer to
-the Godot object, and the ``gdexample_bind_methods`` function, which will
+the Godot object, and the ``gdexample_class_bind_methods`` function, which will
 register the metadata of our custom class (properties, methods, and signals).
 The latter is not entirely necessary, as we can do it when registering the
 class, but it makes clearer to separate the concerns and let our class register
@@ -270,15 +270,15 @@ Let's create the source counterpart of this header. Make the file
 
     #include "gdexample.h"
 
-    void gdexample_init(GDExample *self)
+    void gdexample_class_constructor(GDExample *self)
     {
     }
 
-    void gdexample_terminate(GDExample *self)
+    void gdexample_class_destructor(GDExample *self)
     {
     }
 
-    void gdexample_bind_methods()
+    void gdexample_class_bind_methods()
     {
     }
 
@@ -318,7 +318,7 @@ We'll start by creating an ``api.h`` file in the ``src`` folder:
 
     struct Constructors
     {
-        GDExtensionInterfaceStringNameNewWithUtf8Chars string_name_new_with_utf8_chars;
+        GDExtensionInterfaceStringNameNewWithLatin1Chars string_name_new_with_latin1_chars;
     } constructors;
 
     struct Destructors
@@ -335,7 +335,7 @@ We'll start by creating an ``api.h`` file in the ``src`` folder:
 
     #endif // API_H
 
-This file will include many other helpers as we get to fill our extension with
+This file will include many other helpers as we fill our extension with
 something useful. For now it only has a pointer to a function that creates a
 StringName from a C string (in UTF-8 encoding) and another to destruct a
 StringName, which we'll need to use to avoid leaking memory, as well as the
@@ -346,7 +346,7 @@ Godot provides to us when initializing the extension and we'll need to use it
 when registering the things we create so Godot can tell which extension is
 making the call.
 
-There's also function to load those function pointers from the GDExtension API.
+There's also a function to load those function pointers from the GDExtension API.
 
 Let's work on the source counterpart of this header. Create the ``api.c`` file
 in the ``src`` folder, adding the following code:
@@ -366,7 +366,7 @@ in the ``src`` folder, adding the following code:
         api.classdb_register_extension_class2 = p_get_proc_address("classdb_register_extension_class2");
 
         // Constructors.
-        constructors.string_name_new_with_utf8_chars = p_get_proc_address("string_name_new_with_utf8_chars");
+        constructors.string_name_new_with_latin1_chars = p_get_proc_address("string_name_new_with_latin1_chars");
 
         // Destructors.
         destructors.string_name_destructor = variant_get_ptr_destructor(GDEXTENSION_VARIANT_TYPE_STRING_NAME);
@@ -408,7 +408,7 @@ need in order to register our custom class.
 We also define the ``class_library`` variable here, which will be set during
 initialization.
 
-Speaking of initialization, we have now to change it in the ``init.c`` file in
+Speaking of initialization, now we have to change the ``init.c`` file in
 order to fill the things we just added:
 
 .. code-block:: c
@@ -445,9 +445,9 @@ Since we are here, we can register our new custom class. Let's fill the
 
         // Register class.
         StringName class_name;
-        constructors.string_name_new_with_utf8_chars(&class_name, "GDExample");
+        constructors.string_name_new_with_latin1_chars(&class_name, "GDExample");
         StringName parent_class_name;
-        constructors.string_name_new_with_utf8_chars(&parent_class_name, "Sprite2D");
+        constructors.string_name_new_with_latin1_chars(&parent_class_name, "Sprite2D");
 
         GDExtensionClassCreationInfo2 class_info = {
             .is_virtual = false,
@@ -477,7 +477,7 @@ Since we are here, we can register our new custom class. Let's fill the
         api.classdb_register_extension_class2(class_library, &class_name, &parent_class_name, &class_info);
 
         // Bind methods.
-        gdexample_bind_methods();
+        gdexample_class_bind_methods();
 
         // Destruct things.
         destructors.string_name_destructor(&class_name);
@@ -485,7 +485,7 @@ Since we are here, we can register our new custom class. Let's fill the
     }
 
 The struct with the class information is the biggest thing here. None of its
-fields is required with the exception of ``create_instance_func`` and
+fields are required with the exception of ``create_instance_func`` and
 ``gdexample_free_instance``. We haven't made those functions yet, so we'll have
 to work on them soon. Note that we skip the initialization if it isn't at the
 ``SCENE`` level. This function may be called multiple times, once for each
@@ -535,13 +535,13 @@ include them in ``gdexample.h`` since they're specific to the custom class:
 
     ...
     // Bindings.
-    void gdexample_bind_methods();
+    void gdexample_class_bind_methods();
     GDExtensionObjectPtr gdexample_create_instance(void *p_class_userdata);
     void gdexample_free_instance(void *p_class_userdata, GDExtensionClassInstancePtr p_instance);
     ...
 
 Before we can implement those function, we'll need a few more things in our API.
-We need a way to allocate and free memory. While we could this with good ol'
+We need a way to allocate and free memory. While we could do this with good ol'
 ``malloc``, we can instead leverage of Godot's memory management functions.
 We'll also need a way to create a Godot object and set it with our custom
 instance.
@@ -556,6 +556,7 @@ So let's change the ``api.h`` to include these new functions:
         GDExtensionInterfaceClassdbRegisterExtensionClass2 classdb_register_extension_class2;
         GDExtensionInterfaceClassdbConstructObject classdb_construct_object;
         GDExtensionInterfaceObjectSetInstance object_set_instance;
+        GDExtensionInterfaceObjectSetInstanceBinding object_set_instance_binding;
         GDExtensionInterfaceMemAlloc mem_alloc;
         GDExtensionInterfaceMemFree mem_free;
     } api;
@@ -572,6 +573,7 @@ Then we change the ``load_api()`` function in ``api.c`` to grab these new functi
         api.classdb_register_extension_class2 = p_get_proc_address("classdb_register_extension_class2");
         api.classdb_construct_object = (GDExtensionInterfaceClassdbConstructObject)p_get_proc_address("classdb_construct_object");
         api.object_set_instance = p_get_proc_address("object_set_instance");
+        api.object_set_instance_binding = p_get_proc_address("object_set_instance_binding");
         api.mem_alloc = (GDExtensionInterfaceMemAlloc)p_get_proc_address("mem_alloc");
         api.mem_free = (GDExtensionInterfaceMemFree)p_get_proc_address("mem_free");
     }
@@ -591,18 +593,19 @@ include the ``api.h`` header:
     {
         // Create native Godot object;
         StringName class_name;
-        constructors.string_name_new_with_utf8_chars(&class_name, "Sprite2D");
+        constructors.string_name_new_with_latin1_chars(&class_name, "Sprite2D");
         GDExtensionObjectPtr object = api.classdb_construct_object(&class_name);
         destructors.string_name_destructor(&class_name);
 
         // Create extension object.
         GDExample *self = (GDExample *)api.mem_alloc(sizeof(GDExample));
-        gdexample_init(self);
+        gdexample_class_constructor(self);
         self->object = object;
 
         // Set the extension instance in the native Godot object.
-        constructors.string_name_new_with_utf8_chars(&class_name, "GDExample");
+        constructors.string_name_new_with_latin1_chars(&class_name, "GDExample");
         api.object_set_instance(object, &class_name, self);
+        api.object_set_instance_binding(/* @todo DRS */);
         destructors.string_name_destructor(&class_name);
 
         return object;
@@ -615,7 +618,7 @@ include the ``api.h`` header:
             return;
         }
         GDExample *self = (GDExample *)p_instance;
-        gdexample_terminate(self);
+        gdexample_class_destructor(self);
         api.mem_free(self);
     }
 
@@ -673,7 +676,7 @@ version. It should still work on later versions. If you are using a later Godot
 version and rely on the new features, you need to increase this value to a
 version number that has everything you use.
 
-On the ``[libraries]`` section we set up the paths to the shared library on
+In the ``[libraries]`` section we set up the paths to the shared library on
 different platforms. Here there's only the debug versions since that's what we
 are working on for the example. Using :ref:`Feature tags <doc_feature_tags>` you
 can fine tune this to also provide release versions, add more target OSes, as
@@ -699,7 +702,7 @@ may want to set it as the main scene for convenience.
 .. image:: img/gdextension_c_running.webp
 
 Voilà! We have a custom node running in Godot. However, it does not do anything
-and have Nothing different than the regular node. We will fix that next by
+and has nothing different than a regular ``Sprite2D`` node. We will fix that next by
 adding custom methods and properties.
 
 Custom methods
@@ -730,7 +733,7 @@ behavior for the node. Add them to the ``gdexample.h`` file, changing the
     ...
 
 
-On the same file, add the declaration for the getters and setters, right after
+In the same file, add the declaration for the getters and setters, right after
 the destructor.
 
 .. code-block:: c
@@ -738,7 +741,7 @@ the destructor.
     ...
 
     // Destructor for the node.
-    void gdexample_terminate(GDExample *self);
+    void gdexample_class_destructor(GDExample *self);
 
     // Properties.
     void gdexample_set_amplitude(GDExample *self, double amplitude);
@@ -753,7 +756,7 @@ and add the implementation for those new functions, which are quite trivial:
 
 .. code-block:: c
 
-    void gdexample_init(GDExample *self)
+    void gdexample_class_constructor(GDExample *self)
     {
         self->amplitude = 10.0;
         self->speed = 1.0;
@@ -784,9 +787,9 @@ wrappers to help us properly convert the data to and from the engine.
 
 First, we will create wrappers for ``ptrcall``. This is what Godot uses when the
 types of the values are known to be exact, which avoids using Variant. We're
-gonna need two of those: one for the functions that takes no arguments and
-return a ``double`` (for the getters) and another for the functions that takes a
-single ``double`` argument and returns nothing (for the setters).
+gonna need two of those: one for the functions that take no arguments and
+return a ``double`` (for the getters) and another for the functions that take a
+single ``double`` argument and return nothing (for the setters).
 
 Add the declarations to the ``api.h`` file:
 
@@ -798,7 +801,7 @@ Add the declarations to the ``api.h`` file:
 
 Those two functions follow the ``GDExtensionClassMethodPtrCall`` type, as
 defined in the ``gdextension_interface.h``. We use ``float`` as a name here
-because in Godot the ``float`` type has double precision, so wee keep this
+because in Godot the ``float`` type has double precision, so we keep this
 convention.
 
 Then we implement those functions in the ``api.c`` file:
@@ -858,7 +861,7 @@ First, you receive pointers to Variants instead of exact types. There's also the
 amount of arguments and an error struct that you can set if something goes
 wrong.
 
-In order to the type check and also extract interact with Variant, we will need
+In order to check the type and also extract interact with Variant, we will need
 a few more functions from the GDExtension API. So let's expand our wrapper
 structs:
 
@@ -963,13 +966,13 @@ Now that we have these set, we can implement our call wrappers in the same file:
     }
 
 These functions are a bit longer but easy to follow. First they check if the
-argument count is_abstract as expected and if not they set the error struct and
+argument count is as expected and if not they set the error struct and
 return. For the one that has one parameter, it also checks if the argument type
 is correct. This is important because mismatched types when extracting from
 Variant can cause crashes.
 
 Then it proceeds to extract the argument using the constructor we setup before.
-The one with no arguments instead set the return value after calling the
+The one with no arguments instead sets the return value after calling the
 function. Note how they use a pointer to a ``double`` variable, since this is
 what those constructors expect.
 
@@ -1112,11 +1115,11 @@ Then we can also implement the functions to create the ``PropertyInfo`` struct.
     {
 
         StringName *prop_name = api.mem_alloc(sizeof(StringName));
-        constructors.string_name_new_with_utf8_chars(prop_name, name);
+        constructors.string_name_new_with_latin1_chars(prop_name, name);
         String *prop_hint_string = api.mem_alloc(sizeof(String));
         constructors.string_new_with_utf8_chars(prop_hint_string, hint_string);
         StringName *prop_class_name = api.mem_alloc(sizeof(StringName));
-        constructors.string_name_new_with_utf8_chars(prop_class_name, class_name);
+        constructors.string_name_new_with_latin1_chars(prop_class_name, class_name);
 
         GDExtensionPropertyInfo info = {
             .name = prop_name,
@@ -1186,7 +1189,7 @@ Then switch back to the ``api.c`` file to implement these:
         GDExtensionVariantType return_type)
     {
         StringName method_name_string;
-        constructors.string_name_new_with_utf8_chars(&method_name_string, method_name);
+        constructors.string_name_new_with_latin1_chars(&method_name_string, method_name);
 
         GDExtensionClassMethodCall call_func = call_0_args_ret_float;
         GDExtensionClassMethodPtrCall ptrcall_func = ptrcall_0_args_ret_float;
@@ -1206,7 +1209,7 @@ Then switch back to the ``api.c`` file to implement these:
         };
 
         StringName class_name_string;
-        constructors.string_name_new_with_utf8_chars(&class_name_string, class_name);
+        constructors.string_name_new_with_latin1_chars(&class_name_string, class_name);
 
         api.classdb_register_extension_class_method(class_library, &class_name_string, &method_info);
 
@@ -1226,7 +1229,7 @@ Then switch back to the ``api.c`` file to implement these:
     {
 
         StringName method_name_string;
-        constructors.string_name_new_with_utf8_chars(&method_name_string, method_name);
+        constructors.string_name_new_with_latin1_chars(&method_name_string, method_name);
 
         GDExtensionClassMethodCall call_func = call_1_float_arg_no_ret;
         GDExtensionClassMethodPtrCall ptrcall_func = ptrcall_1_float_arg_no_ret;
@@ -1251,7 +1254,7 @@ Then switch back to the ``api.c`` file to implement these:
         };
 
         StringName class_name_string;
-        constructors.string_name_new_with_utf8_chars(&class_name_string, class_name);
+        constructors.string_name_new_with_latin1_chars(&class_name_string, class_name);
 
         api.classdb_register_extension_class_method(class_library, &class_name_string, &method_info);
 
@@ -1289,11 +1292,11 @@ created since they aren't needed anymore.
 
 Now that we have the means to bind methods, we can actually do so in our custom
 class. Go to the ``gdexample.c`` file and fill up the
-``gdexample_bind_methods()`` function:
+``gdexample_class_bind_methods()`` function:
 
 .. code-block:: c
 
-    void gdexample_bind_methods()
+    void gdexample_class_bind_methods()
     {
         bind_method_0_r("GDExample", "get_amplitude", gdexample_get_amplitude, GDEXTENSION_VARIANT_TYPE_FLOAT);
         bind_method_1("GDExample", "set_amplitude", gdexample_set_amplitude, "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT);
@@ -1303,7 +1306,7 @@ class. Go to the ``gdexample.c`` file and fill up the
     }
 
 Since this function is already being called by the initialization process, we
-can stop here. This function is much straightforward after we created all the
+can stop here. This function is much more straightforward after we created all the
 infrastructure to make this work. You can see that implementing the binding
 functions inline here would take some space and also be quite repetitive. This
 also makes it easier to add another method in the future.
@@ -1371,12 +1374,12 @@ Then we can implement our new helper function in this same file:
         const char *setter)
     {
         StringName class_string_name;
-        constructors.string_name_new_with_utf8_chars(&class_string_name, class_name);
+        constructors.string_name_new_with_latin1_chars(&class_string_name, class_name);
         GDExtensionPropertyInfo info = make_property(type, name);
         StringName getter_name;
-        constructors.string_name_new_with_utf8_chars(&getter_name, getter);
+        constructors.string_name_new_with_latin1_chars(&getter_name, getter);
         StringName setter_name;
-        constructors.string_name_new_with_utf8_chars(&setter_name, setter);
+        constructors.string_name_new_with_latin1_chars(&setter_name, setter);
 
         api.classdb_register_extension_class_property(class_library, &class_string_name, &info, &setter_name, &getter_name);
 
@@ -1395,12 +1398,12 @@ C strings, creating a property info struct using our helper, calling the API
 function to register the property in the class, then destructing all the objects
 we created.
 
-With this done, we can extend the ``gdexample_bind_methods()`` function in the
+With this done, we can extend the ``gdexample_class_bind_methods()`` function in the
 ``gdexample.c`` file:
 
 .. code-block:: c
 
-    void gdexample_bind_methods()
+    void gdexample_class_bind_methods()
     {
         bind_method_0_r("GDExample", "get_amplitude", gdexample_get_amplitude, GDEXTENSION_VARIANT_TYPE_FLOAT);
         bind_method_1("GDExample", "set_amplitude", gdexample_set_amplitude, "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT);
@@ -1411,7 +1414,7 @@ With this done, we can extend the ``gdexample_bind_methods()`` function in the
         bind_property("GDExample", "speed", GDEXTENSION_VARIANT_TYPE_FLOAT, "get_speed", "set_speed");
     }
 
-If you build the extension with ``SCons``, you'll see in the Godot editor the new property shown
+If you build the extension with ``scons``, you'll see in the Godot editor the new property shown
 not only on the documentation page for the custom class but also in the Inspector dock when the
 ``GDExample`` node is selected.
 
@@ -1452,7 +1455,7 @@ field in the constructor:
 
 .. code-block:: c
 
-    void gdexample_init(GDExample *self)
+    void gdexample_class_constructor(GDExample *self)
     {
         self->time_passed = 0.0;
         self->amplitude = 10.0;
@@ -1471,7 +1474,7 @@ Then we can create the simplest implementation for the ``_process`` method:
 For now it will do nothing but update the private field we created. We'll come
 back to this after the method is properly bound.
 
-Virtual methods are a bit different for the regular bindings. Instead of
+Virtual methods are a bit different from the regular bindings. Instead of
 explicitly registering the method itself, we'll register a special function that
 Godot will call to ask if a particular virtual method is implemented in our
 extension. The engine will pass a ``StringName`` as an argument so, following
@@ -1521,7 +1524,7 @@ With this handy, we can easily create our comparison function in the same file:
     {
         // Create a StringName for the C string.
         StringName string_name;
-        constructors.string_name_new_with_utf8_chars(&string_name, p_b);
+        constructors.string_name_new_with_latin1_chars(&string_name, p_b);
 
         // Compare both StringNames.
         bool is_equal = false;
@@ -1726,8 +1729,8 @@ are registering our custom class. Add this to the ``init.c`` file:
         StringName native_class_name;
         StringName method_name;
 
-        constructors.string_name_new_with_utf8_chars(&native_class_name, "Node2D");
-        constructors.string_name_new_with_utf8_chars(&method_name, "set_position");
+        constructors.string_name_new_with_latin1_chars(&native_class_name, "Node2D");
+        constructors.string_name_new_with_latin1_chars(&method_name, "set_position");
         methods.node2d_set_position = api.classdb_get_method_bind(&native_class_name, &method_name, 743155724);
         destructors.string_name_destructor(&native_class_name);
         destructors.string_name_destructor(&method_name);
@@ -1848,9 +1851,9 @@ implement the helper:
         GDExtensionVariantType arg1_type)
     {
         StringName class_string_name;
-        constructors.string_name_new_with_utf8_chars(&class_string_name, class_name);
+        constructors.string_name_new_with_latin1_chars(&class_string_name, class_name);
         StringName signal_string_name;
-        constructors.string_name_new_with_utf8_chars(&signal_string_name, signal_name);
+        constructors.string_name_new_with_latin1_chars(&signal_string_name, signal_name);
 
         GDExtensionPropertyInfo args_info[] = {
             make_property(arg1_type, arg1_name),
@@ -1873,7 +1876,7 @@ With this we can bind the signal in ``gdexample.c``:
 
 .. code-block:: c
 
-    void gdexample_bind_methods()
+    void gdexample_class_bind_methods()
     {
         ...
         bind_signal_1("GDExample", "position_changed", "new_position", GDEXTENSION_VARIANT_TYPE_VECTOR2);
@@ -2022,7 +2025,7 @@ arguments. The ``NULL`` at the end would be a pointer to a
 calling the functions (such as wrong arguments). For the sake of simplicity
 we're not gonna handle that here.
 
-At then end we need to destruct the Variants we created. While technically the
+At the end we need to destruct the Variants we created. While technically the
 Vector2 one does not require destructing, it is clearer to cleanup everything.
 
 We also need to load the MethodBind, which we'll do in the ``init.c`` file,
@@ -2034,8 +2037,8 @@ right after loading the one for the ``set_position`` method we did before:
     {
         ...
 
-        constructors.string_name_new_with_utf8_chars(&native_class_name, "Object");
-        constructors.string_name_new_with_utf8_chars(&method_name, "emit_signal");
+        constructors.string_name_new_with_latin1_chars(&native_class_name, "Object");
+        constructors.string_name_new_with_latin1_chars(&method_name, "emit_signal");
         methods.object_emit_signal = api.classdb_get_method_bind(&native_class_name, &method_name, 4047867050);
         destructors.string_name_destructor(&native_class_name);
         destructors.string_name_destructor(&method_name);
@@ -2070,16 +2073,16 @@ to deal with the new fields:
 
 .. code-block:: c
 
-    void gdexample_init(GDExample *self)
+    void gdexample_class_constructor(GDExample *self)
     {
         ...
         self->time_emit = 0.0;
 
         // Construct the StringName for the signal.
-        constructors.string_name_new_with_utf8_chars(&self->position_changed, "position_changed");
+        constructors.string_name_new_with_latin1_chars(&self->position_changed, "position_changed");
     }
 
-    void gdexample_terminate(GDExample *self)
+    void gdexample_class_destructor(GDExample *self)
     {
         // Destruct the StringName for the signal.
         destructors.string_name_destructor(&self->position_changed);
