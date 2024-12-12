@@ -146,7 +146,7 @@ Create the file ``init.h`` in the ``src`` folder, with the following contents:
 
     #endif // INIT_H
 
-The functions declared here have the signature expected by the GDExtension API.
+The functions declared here have the signatures expected by the GDExtension API.
 
 Note the inclusion of the ``defs.h`` file. This is one of our helpers to
 simplify writing the extension code. For now it will only contain the definition
@@ -249,21 +249,21 @@ contents:
 
     #endif // GDEXAMPLE_H
 
-The only things special here are the ``object`` field, which holds a pointer to
+Noteworthy here is the ``object`` field, which holds a pointer to
 the Godot object, and the ``gdexample_class_bind_methods`` function, which will
 register the metadata of our custom class (properties, methods, and signals).
 The latter is not entirely necessary, as we can do it when registering the
 class, but it makes clearer to separate the concerns and let our class register
 its own metadata.
 
-The  ``object`` field is necessary because our class will inherit a Godot class.
+The ``object`` field is necessary because our class will inherit a Godot class.
 Since we can't inherit it directly, as we are not interacting with the source
 code (and C doesn't even have classes), we instead tell Godot to create an
 object of a type it knows and attach our extension to it. We will need the
 reference to such objects when calling methods on the parent class, for
 instance.
 
-Let's create the source counterpart of this header. Make the file
+Let's create the source counterpart of this header. Create the file
 ``gdexample.c`` in the ``src`` folder and add the following code to it:
 
 .. code-block:: c
@@ -283,8 +283,8 @@ Let's create the source counterpart of this header. Make the file
     }
 
 
-Very boring stuff as for now we don't have anything to do with those functions, so
-they'll stay empty for a while.
+As we don't have anything to do with those functions yet, they'll stay empty
+for a while.
 
 The next step is registering our class. However, in order to do so we need to
 create a :ref:`StringName <class_StringName>` and for that we have to get a
@@ -520,7 +520,7 @@ As mentioned in the comment, the sizes can be found in the
 assume we are working with a 64-bits build of Godot here, but if you need it you
 can add ``env.Append(CPPDEFINES=["BUILD_32"])`` to your ``SConstruct`` file.
 
-The ``// Types.`` comment foreshadows that we'll be adding more things to this
+The ``// Types.`` comment foreshadows that we'll be adding more types to this
 file. Let's leave that for later.
 
 The ``StringName`` struct here is just to hold Godot data, so we don't really
@@ -633,7 +633,7 @@ methods for instance, as well as passing this data back.
 
 Note that we return the Godot object we created, not our custom struct.
 
-For the free function, we just call the destructor and free the memory we
+For the ``gdextension_free_instance`` function, we just call the destructor and free the memory we
 allocated for the custom data. It is not necessary to destruct the Godot object
 since that will be taken care of by the engine itself.
 
@@ -751,8 +751,8 @@ the destructor.
 
     ...
 
-In the ``gdexample.cpp`` file, we will initialize these value in the constructor
-and add the implementation for those new functions, which are quite trivial:
+In the ``gdexample.cpp`` file, we will initialize these values in the constructor
+and add the implementations for those new functions, which are quite trivial:
 
 .. code-block:: c
 
@@ -832,21 +832,21 @@ gave with ``object_set_instance`` when creating the object.
 
 ``p_args`` is an array of arguments. Note this contains **pointers** to the
 values. That's why we dereference it when passing to our functions. The number
-is arguments will be as declared when binding the function (which will do soon)
+of arguments will be declared when binding the function (which we will do soon)
 and it will always include default ones if those exist.
 
-Finally, the ``r_ret`` is a pointer to the place where the return value needs to
+Finally, the ``r_ret`` is a pointer to the variable where the return value needs to
 be set. Like the arguments, it will be the correct type as declared. For the
 function that does not return, we have to avoid setting it.
 
-Note how the types and argument counts are exact, so if we needed different
+Note how the type and argument counts are exact, so if we needed different
 types, for example, we would have to create more wrappers. This could be
 automated using some code generation, but this is out of the scope for this
 tutorial.
 
-While the ``ptrcall`` is used when types are exact, sometimes Godot cannot know
+While the ``ptrcall`` functions are used when types are exact, sometimes Godot cannot know
 if that's the case (when the call comes from a dynamically typed language, such
-as GDScript). In those situations it uses a regular ``call``, so we need to
+as GDScript). In those situations it uses regular ``call`` functions, so we need to
 provide those as well when binding.
 
 Let's create two new wrappers in the ``api.h`` file:
@@ -1144,18 +1144,18 @@ Then we can also implement the functions to create the ``PropertyInfo`` struct.
     }
 
 
-The simple version of ``make_property()`` just call the more complete one with a
+The simple version of ``make_property()`` just calls the more complete one with a
 some default arguments. What those values mean exactly is out of the scope of
 this tutorial, check the page about the :ref:`Object class <doc_object_class>`
 for more details about binding methods and properties.
 
 The complete version is more involved. First, it creates ``String``s and
 ``StringName``s for the needed fields, by allocating memory and calling their
-constructors. Then it creates a ``GDExtensionPropertyInfo`` struct and set all
+constructors. Then it creates a ``GDExtensionPropertyInfo`` struct and sets all
 the fields with the arguments provided. Finally it returns this created struct.
 
-The ``destruct_property()`` function is straightforward, it simply call the
-destructors for the created objects and free their allocated memory.
+The ``destruct_property()`` function is straightforward, it simply calls the
+destructors for the created objects and frees their allocated memory.
 
 Let's go back again to the header ``api.h`` to create the functions that will
 actually bind the methods:
@@ -1391,11 +1391,11 @@ Then we can implement our new helper function in this same file:
     }
 
 This function is similar to the one for binding methods. The main difference is
-that we don't need an extra struct since we can simple use the
+that we don't need an extra struct since we can simply use the
 ``GDExtensionPropertyInfo`` that is created by our helper function, so it's more
-straightforward. It only consists of creating the ``StringName`` values from the
-C strings, creating a property info struct using our helper, calling the API
-function to register the property in the class, then destructing all the objects
+straightforward. It only creates the ``StringName`` values from the
+C strings, creates a property info struct using our helper, calls the API
+function to register the property in the class and then destructs all the objects
 we created.
 
 With this done, we can extend the ``gdexample_class_bind_methods()`` function in the
@@ -1424,7 +1424,7 @@ Binding virtual methods
 -----------------------
 
 Our custom node now has properties to influence how it operates, but it still
-does not do anything. In this section, we will bind the virtual method
+doesn't do anything. In this section, we will bind the virtual method
 :ref:`_process<class_Node_private_method__process>` and make our custom sprite
 move a little bit.
 
@@ -1542,7 +1542,7 @@ the other one using the operator function pointer, and returns the result. Note
 that the return value for the operator is passed as an out reference, this is a
 common thing in the API.
 
-Let's go back the the ``gdexample.h`` file and add a couple of functions that
+Let's go back to the ``gdexample.h`` file and add a couple of functions that
 will be used as the callbacks for the Godot API:
 
 .. code-block:: c
@@ -1550,7 +1550,7 @@ will be used as the callbacks for the Godot API:
     void *gdexample_get_virtual_with_data(void *p_class_userdata, GDExtensionConstStringNamePtr p_name);
     void gdexample_call_virtual_with_data(GDExtensionClassInstancePtr p_instance, GDExtensionConstStringNamePtr p_name, void *p_virtual_call_userdata, const GDExtensionConstTypePtr *p_args, GDExtensionTypePtr r_ret);
 
-There are actually two ways of registering virtual methods. One only has the
+There are actually two ways of registering virtual methods. Only one has the
 ``get`` part, in which you give Godot a properly crafted function pointer which
 will be called. For this we would need to create another helper for each virtual
 method, something that is not very convenient. Instead, we use the second method
@@ -1625,7 +1625,7 @@ this now by making the custom node move following a pattern.
 
 In order to make our node do stuff, we'll need to call Godot methods. Not only
 the GDExtension API functions as we've being doing so far, but actual engine
-methods, as we would do with scripting. This naturally require some extra setup.
+methods, as we would do with scripting. This naturally requires some extra setup.
 
 First, let's add :ref:`Vector2 <class_Vector2>` to our ``defs.h`` file, so we
 can use it in our method:
@@ -1701,14 +1701,14 @@ Then in the ``api.c`` file we can grab the function pointers from Godot:
         ...
     }
 
-The only special thing here is the ``Vector2`` constructor, which we request the
+The only noteworthy part here is the ``Vector2`` constructor, for which we request the
 index ``3``. Since there are multiple constructors with different kinds of
 arguments, we need to specify which one we want. In this case we're getting the
 one that takes two float numbers as the ``x`` and ``y`` coordinates, hence the
 name. This index can be retrieved from the ``extension_api.json`` file. Note we
 also need a new local helper to get it.
 
-Note that we don't get anything for the methods struct here. This is because
+Be aware that we don't get anything for the methods struct here. This is because
 this function is called too early in the initialization process, so classes
 won't be properly registered yet.
 
@@ -2014,7 +2014,7 @@ implement the helper function.
         destructors.variant_destroy(&ret);
     }
 
-This helper has some boilerplate but is quite straightforward. It sets up the
+This helper function has some boilerplate code but is quite straightforward. It sets up the
 two arguments inside stack allocated Variants, then creates an array with
 pointers to those. It also sets up another Variant to keep the return value,
 which we don't need to construct since the call expects it to be uninitialized.
