@@ -744,10 +744,10 @@ the destructor.
     void gdexample_class_destructor(GDExample *self);
 
     // Properties.
-    void gdexample_set_amplitude(GDExample *self, double amplitude);
-    double gdexample_get_amplitude(const GDExample *self);
-    void gdexample_set_speed(GDExample *self, double speed);
-    double gdexample_get_speed(const GDExample *self);
+    void gdexample_class_set_amplitude(GDExample *self, double amplitude);
+    double gdexample_class_get_amplitude(const GDExample *self);
+    void gdexample_class_set_speed(GDExample *self, double speed);
+    double gdexample_class_get_speed(const GDExample *self);
 
     ...
 
@@ -762,22 +762,22 @@ and add the implementations for those new functions, which are quite trivial:
         self->speed = 1.0;
     }
 
-    void gdexample_set_amplitude(GDExample *self, double amplitude)
+    void gdexample_class_set_amplitude(GDExample *self, double amplitude)
     {
         self->amplitude = amplitude;
     }
 
-    double gdexample_get_amplitude(const GDExample *self)
+    double gdexample_class_get_amplitude(const GDExample *self)
     {
         return self->amplitude;
     }
 
-    void gdexample_set_speed(GDExample *self, double speed)
+    void gdexample_class_set_speed(GDExample *self, double speed)
     {
         self->speed = speed;
     }
 
-    double gdexample_get_speed(const GDExample *self)
+    double gdexample_class_get_speed(const GDExample *self)
     {
         return self->speed;
     }
@@ -1298,11 +1298,11 @@ class. Go to the ``gdexample.c`` file and fill up the
 
     void gdexample_class_bind_methods()
     {
-        bind_method_0_r("GDExample", "get_amplitude", gdexample_get_amplitude, GDEXTENSION_VARIANT_TYPE_FLOAT);
-        bind_method_1("GDExample", "set_amplitude", gdexample_set_amplitude, "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_0_r("GDExample", "get_amplitude", gdexample_class_get_amplitude, GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_1("GDExample", "set_amplitude", gdexample_class_set_amplitude, "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT);
 
-        bind_method_0_r("GDExample", "get_speed", gdexample_get_speed, GDEXTENSION_VARIANT_TYPE_FLOAT);
-        bind_method_1("GDExample", "set_speed", gdexample_set_speed, "speed", GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_0_r("GDExample", "get_speed", gdexample_class_get_speed, GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_1("GDExample", "set_speed", gdexample_class_set_speed, "speed", GDEXTENSION_VARIANT_TYPE_FLOAT);
     }
 
 Since this function is already being called by the initialization process, we
@@ -1405,12 +1405,12 @@ With this done, we can extend the ``gdexample_class_bind_methods()`` function in
 
     void gdexample_class_bind_methods()
     {
-        bind_method_0_r("GDExample", "get_amplitude", gdexample_get_amplitude, GDEXTENSION_VARIANT_TYPE_FLOAT);
-        bind_method_1("GDExample", "set_amplitude", gdexample_set_amplitude, "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_0_r("GDExample", "get_amplitude", gdexample_class_get_amplitude, GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_1("GDExample", "set_amplitude", gdexample_class_set_amplitude, "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT);
         bind_property("GDExample", "amplitude", GDEXTENSION_VARIANT_TYPE_FLOAT, "get_amplitude", "set_amplitude");
 
-        bind_method_0_r("GDExample", "get_speed", gdexample_get_speed, GDEXTENSION_VARIANT_TYPE_FLOAT);
-        bind_method_1("GDExample", "set_speed", gdexample_set_speed, "speed", GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_0_r("GDExample", "get_speed", gdexample_class_get_speed, GDEXTENSION_VARIANT_TYPE_FLOAT);
+        bind_method_1("GDExample", "set_speed", gdexample_class_set_speed, "speed", GDEXTENSION_VARIANT_TYPE_FLOAT);
         bind_property("GDExample", "speed", GDEXTENSION_VARIANT_TYPE_FLOAT, "get_speed", "set_speed");
     }
 
@@ -1434,7 +1434,7 @@ In the ``gdexample.h`` file, let's add a function that represents the custom
 .. code-block:: c
 
     // Methods.
-    void gdexample_process(GDExample *self, double delta);
+    void gdexample_class_process(GDExample *self, double delta);
 
 We'll also add a "private" field to keep track of the time passed in our custom
 struct. This is "private" only in the sense that it won't be bound to the Godot
@@ -1466,7 +1466,7 @@ Then we can create the simplest implementation for the ``_process`` method:
 
 .. code-block:: c
 
-    void gdexample_process(GDExample *self, double delta)
+    void gdexample_class_process(GDExample *self, double delta)
     {
         self->time_passed += self->speed * delta;
     }
@@ -1566,10 +1566,10 @@ So let's implement those two functions in the ``gdexample.c`` file:
 
     void *gdexample_get_virtual_with_data(void *p_class_userdata, GDExtensionConstStringNamePtr p_name)
     {
-        // If it is the "_process" method, return a pointer to the gdexample_process function.
+        // If it is the "_process" method, return a pointer to the gdexample_class_process function.
         if (is_string_name_equal(p_name, "_process"))
         {
-            return (void *)gdexample_process;
+            return (void *)gdexample_class_process;
         }
         // Otherwise, return NULL.
         return NULL;
@@ -1578,7 +1578,7 @@ So let's implement those two functions in the ``gdexample.c`` file:
     void gdexample_call_virtual_with_data(GDExtensionClassInstancePtr p_instance, GDExtensionConstStringNamePtr p_name, void *p_virtual_call_userdata, const GDExtensionConstTypePtr *p_args, GDExtensionTypePtr r_ret)
     {
         // If it is the "_process" method, call it with a helper.
-        if (is_string_name_equal(p_name, "_process"))
+        if (p_virtual_call_userdata == &gdexample_class_process)
         {
             ptrcall_1_float_arg_no_ret(p_virtual_call_userdata, p_instance, p_args, r_ret);
         }
@@ -1762,7 +1762,7 @@ With all that, we can finally implement our custom ``_process()`` method in the
 
     ...
 
-    void gdexample_process(GDExample *self, double delta)
+    void gdexample_class_process(GDExample *self, double delta)
     {
         self->time_passed += self->speed * delta;
 
@@ -2090,12 +2090,12 @@ to deal with the new fields:
 
 It is important to destruct the StringName to avoid memory leaks.
 
-Now we can add to the ``gdexample_process()`` function to actually emit the
+Now we can add to the ``gdexample_class_process()`` function to actually emit the
 signal:
 
 .. code-block:: c
 
-    void gdexample_process(GDExample *self, double delta)
+    void gdexample_class_process(GDExample *self, double delta)
     {
         ...
 
